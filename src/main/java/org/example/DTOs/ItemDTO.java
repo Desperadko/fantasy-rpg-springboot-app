@@ -1,4 +1,4 @@
 package org.example.DTOs;
 
-public class ItemDTO {
+public record ItemDTO(String itemName,Integer itemType) {
 }

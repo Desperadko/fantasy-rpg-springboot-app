@@ -1,4 +1,40 @@
 package org.example.Entities;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import org.hibernate.grammars.hql.HqlParser;
+
+@Data
+@Entity
+@Table(name = "items")
 public class Item {
+
+    enum ItemType{
+        Thrash(0),
+        Equipable(1),
+        Usable(2);
+
+        private int type;
+
+        ItemType(int type){
+            this.type = type;
+        }
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "itemName")
+    private String itemName;
+    @Column(name = "itemType")
+    private ItemType itemType;
+
 }
