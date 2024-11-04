@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "stats")
+@Table(name = "stat")
 public class Stat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +16,6 @@ public class Stat {
     @Column(name="StatName")
     private String Name;
 
-    @OneToMany(mappedBy = "stats", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stat", cascade = CascadeType.ALL)
     private List<ItemStat> itemStats;
 }

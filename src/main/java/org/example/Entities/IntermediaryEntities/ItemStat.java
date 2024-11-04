@@ -13,6 +13,9 @@ public class ItemStat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "StatValue")
+    private Integer statValue;
+
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
