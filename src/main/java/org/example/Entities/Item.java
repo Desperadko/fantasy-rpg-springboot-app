@@ -1,15 +1,15 @@
 package org.example.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.JoinColumn;
-import org.hibernate.grammars.hql.HqlParser;
+import org.example.Entities.IntermediaryEntities.ItemStat;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -21,7 +21,7 @@ public class Item {
         Equipable(1),
         Usable(2);
 
-        private int type;
+        private final int type;
 
         ItemType(int type){
             this.type = type;
@@ -37,4 +37,6 @@ public class Item {
     @Column(name = "itemType")
     private ItemType itemType;
 
+    @OneToMany(mappedBy = "items",cascade = CascadeType.ALL)
+    private List<ItemStat> itemStats;
 }
