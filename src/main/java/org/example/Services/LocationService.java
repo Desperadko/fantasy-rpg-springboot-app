@@ -29,24 +29,19 @@ public class LocationService {
     public Location getLocationById(Long locationId) {
         return getLocation(locationId);
     }
-
     public Location createLocation(LocationDTO locationDTO) {
         var locationName = locationDTO.name();
         if(locationRepository.existsByName(locationName))
             throw new IllegalStateException("Location with name '" + locationName + "' already exists..");
 
-        var location = locationMapper.convertDtoToEntity(locationDTO);
-        return locationRepository.saveAndFlush(location);
+        return saveLocationDtoToDatabase(locationDTO);
     }
-
     public Location updateLocation(LocationDTO locationDTO, Long locationId) {
         if(!locationRepository.existsById(locationId))
             throw new EntityNotFoundException("Location ID: " + locationId);
 
-        var location = locationMapper.convertDtoToEntity(locationDTO);
-        return locationRepository.saveAndFlush(location);
+        return saveLocationDtoToDatabase(locationDTO);
     }
-
     public void deleteLocation(Long locationId) {
         var location = getLocation(locationId);
         var questIds = questRepository.findAllQuestIdsByLocation(location);
@@ -62,5 +57,9 @@ public class LocationService {
     private Location getLocation(Long locationId){
         return locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("Location ID: " + locationId));
+    }
+    private Location saveLocationDtoToDatabase(LocationDTO locationDTO) {
+        var location = locationMapper.convertDtoToEntity(locationDTO);
+        return locationRepository.saveAndFlush(location);
     }
 }
