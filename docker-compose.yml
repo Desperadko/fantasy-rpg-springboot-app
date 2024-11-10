@@ -11,9 +11,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/databaserpg
       SPRING_DATASOURCE_USERNAME: Vik40
       SPRING_DATASOURCE_PASSWORD: PegvamTinko
+    volumes:
+      - quest_descriptions:/app/src/main/resources/QuestDescriptions
     depends_on:
       - mysql
-
   mysql:
     image: mysql:8.0
     container_name: mysql-db
@@ -24,3 +25,5 @@ services:
       MYSQL_PASSWORD: PegvamTinko
     ports:
       - "3306:3306"
+volumes:
+  quest_descriptions:
