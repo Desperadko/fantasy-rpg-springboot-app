@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -20,5 +21,24 @@ public class Location {
 
     @OneToMany(mappedBy = "location", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
+    private Set<Player> players;
+
+    @OneToMany(mappedBy = "location", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Quest> quests;
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+        if(other == null || getClass() != other.getClass()) return false;
+
+        Location location = (Location)other;
+        return Objects.equals(id, location.id)
+                && Objects.equals(name, location.name);
+    }
 }
