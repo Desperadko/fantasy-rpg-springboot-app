@@ -22,8 +22,7 @@ public class Account {
     @Column(name = "password")
     String password;
 
-    //to be uncommented when player entity is implemented
-//    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    List<Player> accountCharacters;
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<Player> accountCharacters;
 }
