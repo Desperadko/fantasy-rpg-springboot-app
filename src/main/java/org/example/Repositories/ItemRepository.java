@@ -20,4 +20,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Modifying
     @Query("UPDATE Item i SET i.itemName = :itemName WHERE i.id = :itemId")
     void setItemName(Long itemId, String itemName);
+
 }
