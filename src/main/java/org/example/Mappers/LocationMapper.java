@@ -9,5 +9,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface LocationMapper {
     @Mapping(target = "name", source = "locationDto.name")
-    public Location convertDtoToEntity(LocationDTO locationDto);
+    @Mapping(target = "id", source = "locationId")
+    Location convertDtoToEntity(LocationDTO locationDto, Long locationId);
 }

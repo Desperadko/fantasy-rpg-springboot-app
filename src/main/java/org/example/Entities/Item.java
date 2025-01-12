@@ -1,6 +1,5 @@
 package org.example.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import jakarta.persistence.Entity;
@@ -21,7 +20,7 @@ public class Item {
         Equipable(1),
         Usable(2);
 
-        private final int type;
+        private int type;
 
         ItemType(int type){
             this.type = type;
@@ -37,6 +36,4 @@ public class Item {
     @Column(name = "itemType")
     private ItemType itemType;
 
-    @OneToMany(mappedBy = "items",cascade = CascadeType.ALL)
-    private List<ItemStat> itemStats;
 }

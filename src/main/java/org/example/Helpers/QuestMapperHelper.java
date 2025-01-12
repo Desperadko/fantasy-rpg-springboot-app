@@ -1,18 +1,20 @@
-package org.example.Mappers.HelperClasses;
+package org.example.Helpers;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.Entities.Location;
 import org.example.Repositories.LocationRepository;
+import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class QuestMapperHelper {
-    private final LocationRepository locationRepository;
+    LocationRepository locationRepository;
 
-    public Location getLocationByName(String locationName){
+    @Named("findLocationByName")
+    public Location findLocationByName(String locationName){
         return locationRepository.findLocationByName(locationName)
-                .orElseThrow(() -> new EntityNotFoundException("Location with name: '" + locationName + "' does not exist."));
+                .orElseThrow(() -> new EntityNotFoundException("Location with name '" + locationName + "' does not exist.."));
     }
 }

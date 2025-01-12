@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import org.example.DTOs.QuestDTO;
 import org.example.DTOs.QuestDescriptionDTO;
 import org.example.Entities.Quest;
-import org.example.Mappers.HelperClasses.QuestMapperHelper;
+import org.example.Helpers.QuestFilePathManager;
 import org.example.Mappers.QuestMapper;
 import org.example.Repositories.LocationRepository;
 import org.example.Repositories.QuestRepository;
@@ -28,12 +28,11 @@ import java.util.Map;
 public class QuestService {
     private final QuestRepository questRepository;
     private final QuestMapper questMapper;
-    private final QuestMapperHelper questMapperHelper;
+    private final QuestFilePathManager questFilePathManager;
 
     private final LocationRepository locationRepository;
 
     private final ObjectMapper objectMapper;
-    private final Path questDescriptionsDirectoryPath = Paths.get("src", "main", "resources", "QuestDescriptions");
 
     public Page<Quest> getAllQuests(Pageable pageable){
         return questRepository.findAll(pageable);
@@ -51,7 +50,7 @@ public class QuestService {
             throw new IllegalStateException("Quest names can only contain letters, numbers and spaces. '" + questName + "' is not valid..");
 
         var questDescription = new QuestDescriptionDTO(questDto.description());
-        var filePath = createQuestDescriptionFilePath(questName);
+        var filePath = questFilePathManager.createQuestDescriptionFilePath(questName);
 
         try{
             objectMapper.writeValue(new File(filePath), questDescription);
@@ -60,7 +59,7 @@ public class QuestService {
             throw new RuntimeException("Error saving quest to file: '" + filePath + "'..", e);
         }
 
-        var quest = questMapper.convertDtoToEntity(questDto, filePath, null, questMapperHelper);
+        var quest = questMapper.convertDtoToEntity(questDto, null);
         return questRepository.saveAndFlush(quest);
     }
     public String getQuestDescriptionById(Long questId){
@@ -102,6 +101,7 @@ public class QuestService {
     }
     public void deleteQuest(Long questId){
         var quest = getQuest(questId);
+
         try {
             Files.delete(Paths.get(quest.getDescriptionFilePath()));
         }
@@ -109,25 +109,14 @@ public class QuestService {
             throw new RuntimeException("Error deleting quest description while deleting quest with name: '" + quest.getName() + "'..");
         }
 
+        var location = quest.getLocation();
+        location.getQuests().remove(quest);
+        locationRepository.save(location);
+
         questRepository.delete(quest);
     }
 
     //utils
-    private String createQuestDescriptionFilePath(String questName){
-        try{
-            Files.createDirectories(questDescriptionsDirectoryPath);
-        } catch (IOException e) {
-            throw new RuntimeException("Couldn't create directory at filepath: '" + questDescriptionsDirectoryPath.toAbsolutePath() + "'..", e);
-        }
-
-        var path = questDescriptionsDirectoryPath.resolve(questName.trim().replaceAll("\\s", "_").toLowerCase() + ".json");
-
-        if(Files.exists(path))
-            throw new IllegalStateException("File for quest: '" + questName + "' already exists..");
-
-        return path.toString();
-    }
-
     private Quest getQuest(Long questId){
         return questRepository.findById(questId)
                 .orElseThrow(() -> new EntityNotFoundException("Quest ID: " + questId));
