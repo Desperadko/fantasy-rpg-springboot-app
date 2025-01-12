@@ -3,13 +3,19 @@ package org.example.Controllers;
 import lombok.AllArgsConstructor;
 import org.example.DTOs.ItemDTO;
 import org.example.Entities.Item;
+import org.example.Entities.Stat;
 import org.example.Mappers.ItemMapper;
 import org.example.Repositories.ItemRepository;
+import org.example.Repositories.ItemStatRepository;
+import org.example.Repositories.StatRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/items")
@@ -17,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController {
 
     private ItemRepository itemRepository;
+    private ItemStatRepository itemStatRepository;
+    private StatRepository statRepository;
     private ItemMapper itemMapper;
 
     @GetMapping
@@ -73,4 +81,96 @@ public class ItemController {
         itemRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/by-names/{itemName}")
+    public ResponseEntity<List<ItemDTO>> getItemsByName(@PathVariable String itemName) {
+        return itemRepository.findByItemName(itemName)
+                .map(items -> items.stream()
+                        .map(itemMapper::convertEntityToDto)
+                        .collect(Collectors.toList()))
+                .map(dtos -> new ResponseEntity<>(dtos, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/by-ids")
+    public ResponseEntity<List<ItemDTO>> getItemsByIds(@RequestParam List<Long> ids) {
+        return itemRepository.findAllByIdIn(ids)
+                .map(items -> items.stream()
+                        .map(itemMapper::convertEntityToDto)
+                        .collect(Collectors.toList()))
+                .map(dtos -> new ResponseEntity<>(dtos, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/by-stat/{statId}")
+    public ResponseEntity<Page<ItemDTO>> getItemsByStat(
+            @PathVariable Long statId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Stat stat = statRepository.findById(statId)
+                .orElseThrow(() -> new RuntimeException("Stat not found"));
+
+        Page<Item> items = itemRepository.findByItemStats(stat, PageRequest.of(page, size));
+        return new ResponseEntity<>(items.map(itemMapper::convertEntityToDto), HttpStatus.OK);
+    }
+
+    @GetMapping("/{itemId}/stats")
+    public ResponseEntity<List<Stat>> getItemStats(@PathVariable Long itemId) {
+        List<Stat> stats = statRepository.findStatsByItemId(itemId);
+        return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+
+    @GetMapping("/{itemId}/stat-values")
+    public ResponseEntity<List<Object>> getItemStatValues(@PathVariable Long itemId) {
+        List<Object> itemStats = itemStatRepository.findByItems_Id(itemId);
+        return new ResponseEntity<>(itemStats, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{itemId}/stats/{statId}")
+    public ResponseEntity<?> updateItemStatValue(
+            @PathVariable Long itemId,
+            @PathVariable Long statId,
+            @RequestParam Integer value
+    ) {
+        itemStatRepository.updateStatValue(itemId, statId, value);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/stats/value-greater-than")
+    public ResponseEntity<List<Object>> getItemsWithStatGreaterThan(@RequestParam Integer value) {
+        List<Object> itemStats = itemStatRepository.findByStatValueGreaterThan(value);
+        return new ResponseEntity<>(itemStats, HttpStatus.OK);
+    }
+
+    @GetMapping("/stats/value-less-than")
+    public ResponseEntity<List<Object>> getItemsWithStatLessThan(@RequestParam Integer value) {
+        List<Object> itemStats = itemStatRepository.findByStatValueLessThan(value);
+        return new ResponseEntity<>(itemStats, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{itemId}/stats/{statId}")
+    public ResponseEntity<?> deleteItemStat(
+            @PathVariable Long itemId,
+            @PathVariable Long statId
+    ) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+        Stat stat = statRepository.findById(statId)
+                .orElseThrow(() -> new RuntimeException("Stat not found"));
+
+        itemStatRepository.deleteByItemsAndStats(item, stat);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{itemId}/stats")
+    public ResponseEntity<?> deleteAllItemStats(@PathVariable Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        itemStatRepository.deleteByItems(item);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
+
+
