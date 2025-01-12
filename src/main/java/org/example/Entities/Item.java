@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "items")
 public class Item {
 
-    enum ItemType{
+    public enum ItemType{
         Thrash(0),
         Equipable(1),
         Usable(2);
@@ -36,4 +36,8 @@ public class Item {
     @Column(name = "itemType")
     private ItemType itemType;
 
-}
+    @OneToMany(mappedBy = "items", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemStat> itemStats;
+
+    }
+

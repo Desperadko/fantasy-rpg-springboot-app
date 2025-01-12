@@ -18,7 +18,7 @@ public class ItemStat {
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    private Item items;
 
     @ManyToOne
     @JoinColumn(name = "stat_id", nullable = false)
