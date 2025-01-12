@@ -14,29 +14,21 @@ import java.util.Optional;
 
 public interface ItemStatRepository extends JpaRepository<ItemStat, Long> {
 
-    List<ItemStat> findByItems(Item item);
-    List<ItemStat> findByStats(Stat stat);
-    Optional<ItemStat> findByItemsAndStats(Item item, Stat stat);
+    //List<ItemStat> findByItem(Item item);
+    //List<ItemStat> findByStat(Stat stat);
+    //Optional<ItemStat> findByItemAndStat(Item item, Stat stat);
 
-    List<ItemStat> findByStatValue(Integer value);
     List<Object> findByStatValueGreaterThan(Integer value);
     List<Object> findByStatValueLessThan(Integer value);
 
-    List<Object> findByItems_Id(Long itemId);
-    List<ItemStat> findByStats_ID(Long statId);
+    List<Object> findByItem_Id(Long itemId);
+    void deleteByItem(Item item);
+    void deleteByItemAndStat(Item item, Stat stat);
 
     @Modifying
-    @Query("UPDATE ItemStat is SET is.statValue = :value WHERE is.id = :id")
-    void updateStatValue(Long id, Integer value);
-
-    @Modifying
-    @Query("UPDATE ItemStat is SET is.statValue = :value WHERE is.items.id = :itemId AND is.stats.ID = :statId")
+    @Query("UPDATE ItemStat is SET is.statValue = :value WHERE is.item.id = :itemId AND is.stat.id = :statId")
     void updateStatValue(Long itemId, Long statId, Integer value);
 
-    void deleteByItems(Item item);
-    void deleteByStats(Stat stat);
-    void deleteByItemsAndStats(Item item, Stat stat);
-
-    Page<ItemStat> findByItems(Item item, Pageable pageable);
-    Page<ItemStat> findByStats(Stat stat, Pageable pageable);
+    //Page<ItemStat> findByItem(Item item, Pageable pageable);
+    //Page<ItemStat> findByStat(Stat stat, Pageable pageable);
 }

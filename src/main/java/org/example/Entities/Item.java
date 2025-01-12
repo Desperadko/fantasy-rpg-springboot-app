@@ -31,13 +31,13 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "itemName")
+    @Column(name = "item_name")
     private String itemName;
-    @Column(name = "itemType")
+    @Column(name = "item_type")
     private ItemType itemType;
 
-    @OneToMany(mappedBy = "items", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemStat> itemStats;
 
-    }
+}
 

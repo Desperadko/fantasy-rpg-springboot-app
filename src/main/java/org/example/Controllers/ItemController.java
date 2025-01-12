@@ -123,7 +123,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}/stat-values")
     public ResponseEntity<List<Object>> getItemStatValues(@PathVariable Long itemId) {
-        List<Object> itemStats = itemStatRepository.findByItems_Id(itemId);
+        List<Object> itemStats = itemStatRepository.findByItem_Id(itemId);
         return new ResponseEntity<>(itemStats, HttpStatus.OK);
     }
 
@@ -159,7 +159,7 @@ public class ItemController {
         Stat stat = statRepository.findById(statId)
                 .orElseThrow(() -> new RuntimeException("Stat not found"));
 
-        itemStatRepository.deleteByItemsAndStats(item, stat);
+        itemStatRepository.deleteByItemAndStat(item, stat);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -168,9 +168,8 @@ public class ItemController {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
-        itemStatRepository.deleteByItems(item);
+        itemStatRepository.deleteByItem(item);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-
 

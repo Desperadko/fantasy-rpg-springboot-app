@@ -12,16 +12,8 @@ import java.util.Optional;
 
 public interface StatRepository extends JpaRepository<Stat, Long> {
 
-    Optional<Stat> findByName(String name);
-    List<Stat> findByNameContaining(String namePart);
-
-    List<Stat> findByItemStats(ItemStat itemStat);
-
-    @Query("SELECT s FROM Stat s JOIN s.itemStats is WHERE is.items.id = :itemId")
+    @Query("SELECT s FROM Stat s JOIN s.itemStats is WHERE is.item.id = :itemId")
     List<Stat> findStatsByItemId(Long itemId);
-
-    boolean existsByName(String name);
-
     Page<Stat> findAll(Pageable pageable);
-    Page<Stat> findByNameContaining(String namePart, Pageable pageable);
+
 }
