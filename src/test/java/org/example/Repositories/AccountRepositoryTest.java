@@ -47,11 +47,11 @@ class AccountRepositoryTest {
         account.setUsername("JohnDarkSouls");
         account.setEmail("johndarksouls@gmail.com");
         account.setPassword("gearlessrunftw");
-        accountRepository.save(account);
+        var savedAccount = accountRepository.save(account);
 
-        accountRepository.delete(account);
+        accountRepository.delete(savedAccount);
 
-        var deletedAccount = accountRepository.findById(account.getId());
+        var deletedAccount = accountRepository.findById(savedAccount.getId());
         assertThat(deletedAccount).isEmpty();
     }
 }

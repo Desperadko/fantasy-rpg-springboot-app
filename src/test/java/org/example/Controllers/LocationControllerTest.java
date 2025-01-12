@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.DTOs.LocationDTO;
 import org.example.Repositories.LocationRepository;
 import org.example.Services.LocationService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,18 +55,16 @@ class LocationControllerTest {
                 .andExpect(jsonPath("$.name").value("4arodeika"));
     }
 
-    //WORK IN PROGRESS
+    @Test
+    void createLocation_Success() throws Exception {
+        var locationDTO = new LocationDTO("Kumluka");
 
-//    @Test
-//    void createLocation_Success() throws Exception {
-//        var locationDTO = new LocationDTO("Kumluka");
-//
-//        mockMvc.perform(post("/location")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(locationDTO)))
-//                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.name").value("Kumluka"));
-//    }
+        mockMvc.perform(post("/location")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(locationDTO)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Kumluka"));
+    }
 
     @Test
     void updateLocation_Success() throws Exception {
@@ -78,6 +78,11 @@ class LocationControllerTest {
     }
 
     @Test
-    void deleteLocation_Success() {
+    void deleteLocation_Success() throws Exception {
+        mockMvc.perform(delete("/location/{locationId}", 2L))
+                .andExpect(status().isAccepted());
+
+        var deletedLocation = locationRepository.findById(2L);
+        assertThat(deletedLocation).isEmpty();
     }
 }

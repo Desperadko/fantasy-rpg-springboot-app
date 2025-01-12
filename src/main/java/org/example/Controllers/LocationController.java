@@ -30,12 +30,12 @@ public class LocationController {
         return new ResponseEntity<>(location, HttpStatus.OK);
     }
     @PostMapping()
-    public ResponseEntity<Location> createLocation(LocationDTO locationDTO){
+    public ResponseEntity<Location> createLocation(@RequestBody LocationDTO locationDTO){
         var location = locationService.createLocation(locationDTO);
         return new ResponseEntity<>(location, HttpStatus.CREATED);
     }
     @PatchMapping(value = "/{locationId}")
-    public ResponseEntity<Location> updateLocation(LocationDTO locationDTO, @PathVariable Long locationId){
+    public ResponseEntity<Location> updateLocation(@RequestBody LocationDTO locationDTO, @PathVariable Long locationId){
         var location = locationService.updateLocation(locationDTO, locationId);
         return new ResponseEntity<>(location, HttpStatus.ACCEPTED);
     }

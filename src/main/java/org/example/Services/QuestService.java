@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 @Service
@@ -45,7 +46,7 @@ public class QuestService {
         var questName = questDto.name();
 
         if(!locationExists(locationName))
-            throw new EntityNotFoundException("Location with name '" + locationName + "' does not exit..");
+            throw new EntityNotFoundException("Location with name '" + locationName + "' does not exist..");
         if(!isValidQuestName(questName))
             throw new IllegalStateException("Quest names can only contain letters, numbers and spaces. '" + questName + "' is not valid..");
 
@@ -73,13 +74,34 @@ public class QuestService {
             throw new RuntimeException("Error retrieving quest description from file: '" + questDescriptionFilePath + "'..", e);
         }
     }
-    public Quest updateQuestName(String questName, Long questId) {
-        int rowsUpdated = questRepository.updateQuestName(questName, questId);
+    public Quest updateQuestName(String questName, Long questId) throws IOException {
+        var quest = getQuest(questId);
+        var oldQuestDescriptionFilePath = quest.getDescriptionFilePath();
 
+        int rowsUpdated = questRepository.updateQuestName(questName, questId);
         if(rowsUpdated == 0)
             throw new EntityNotFoundException("Quest ID: " + questId);
 
-        return getQuest(questId);
+        var newQuestDescriptionFilePath = questFilePathManager.createQuestDescriptionFilePath(questName);
+        questRepository.updateQuestDescriptionFilePath(newQuestDescriptionFilePath, questId);
+
+        var oldQuestDescriptionFile = Path.of(oldQuestDescriptionFilePath);
+        var newQuestDescriptionFile = Path.of(newQuestDescriptionFilePath);
+
+        try{
+            Files.move(oldQuestDescriptionFile, newQuestDescriptionFile, StandardCopyOption.ATOMIC_MOVE);
+        }
+        catch (IOException e){
+            throw new RuntimeException("Error renaming quest description file: " +
+                    "'" + oldQuestDescriptionFilePath + "' " +
+                    "to: '" + newQuestDescriptionFilePath + "' .."
+                    + e);
+        }
+
+        quest.setName(questName);
+        quest.setDescriptionFilePath(newQuestDescriptionFilePath);
+
+        return quest;
     }
     public QuestDescriptionDTO updateQuestDescription(QuestDescriptionDTO questDescriptionDTO, Long questId){
         var questDescriptionFilePath = getQuest(questId).getDescriptionFilePath();
@@ -125,7 +147,7 @@ public class QuestService {
         return locationRepository.existsByName(locationName);
     }
     private boolean isValidQuestName(String questName){
-        String specialCharacters = "[^a-zA-z0-9 ]";
+        String specialCharacters = "[^a-zA-z0-9 '-]";
         return !questName.matches(".*" + specialCharacters + ".*");
     }
 }

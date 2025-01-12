@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.DTOs.AccountDTO;
 import org.example.Repositories.AccountRepository;
 import org.example.Services.AccountService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,6 @@ class AccountControllerTest {
 
     @BeforeEach
     void setup(){
-        jdbcTemplate.execute("DELETE FROM accounts");
-        jdbcTemplate.execute("ALTER TABLE accounts ALTER COLUMN id RESTART WITH 1");
-
         accountService.createAccount(
             new AccountDTO(
                  "Tin4o",
@@ -58,6 +56,12 @@ class AccountControllerTest {
                     "azsampedal"
             )
         );
+    }
+
+    @AfterEach
+    void cleanup(){
+        jdbcTemplate.execute("DELETE FROM accounts");
+        jdbcTemplate.execute("ALTER TABLE accounts ALTER COLUMN id RESTART WITH 1");
     }
 
     @Test
