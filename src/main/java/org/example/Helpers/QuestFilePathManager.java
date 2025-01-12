@@ -31,6 +31,10 @@ public class QuestFilePathManager {
 
         return path.toString();
     }
+    public boolean questDescriptionFilePathExists(String questName){
+        var path = getPathByQuestName(questName);
+        return Files.exists(path);
+    }
 
     private Path getPathByQuestName(String questName) {
         try{

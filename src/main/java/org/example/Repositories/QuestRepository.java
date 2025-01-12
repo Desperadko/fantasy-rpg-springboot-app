@@ -20,4 +20,7 @@ public interface QuestRepository extends JpaRepository<Quest, Long> {
     @Modifying
     @Query(value = "UPDATE Quest q SET q.name = :questName WHERE q.id = :questId")
     int updateQuestName(String questName, Long questId);
+    @Modifying
+    @Query(value = "UPDATE Quest q SET q.descriptionFilePath = :questDescriptionFilePath WHERE q.id = :questId")
+    int updateQuestDescriptionFilePath(String questDescriptionFilePath, Long questId);
 }

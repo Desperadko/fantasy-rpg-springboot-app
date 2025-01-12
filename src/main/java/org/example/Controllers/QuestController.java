@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping(value = "/quest")
@@ -41,14 +43,14 @@ public class QuestController {
         return new ResponseEntity<>(quest, HttpStatus.CREATED);
     }
     @PatchMapping(value = "/{questId}")
-    public ResponseEntity<Quest> updateQuestName(String questName, @PathVariable Long questId){
+    public ResponseEntity<Quest> updateQuestName(@RequestParam String questName, @PathVariable Long questId) throws IOException {
         var quest = questService.updateQuestName(questName, questId);
         return new ResponseEntity<>(quest, HttpStatus.ACCEPTED);
     }
     @PatchMapping(value = "/{questId}/description")
-    public ResponseEntity<QuestDescriptionDTO> updateQuestDescription(QuestDescriptionDTO questDescriptionDTO, @PathVariable Long questId){
-        var quest = questService.updateQuestDescription(questDescriptionDTO, questId);
-        return new ResponseEntity<>(quest, HttpStatus.ACCEPTED);
+    public ResponseEntity<QuestDescriptionDTO> updateQuestDescription(@RequestBody QuestDescriptionDTO questDescriptionDTO, @PathVariable Long questId){
+        var questDescription = questService.updateQuestDescription(questDescriptionDTO, questId);
+        return new ResponseEntity<>(questDescription, HttpStatus.ACCEPTED);
     }
     @DeleteMapping("/{questId}")
     public ResponseEntity<?> deleteQuest(@PathVariable Long questId){
