@@ -1,4 +1,4 @@
-# FantasyRPGApplication - University Project
+# Fantasy RPG Application - University Project
 
 ## Project Overview
 This project is a Spring Boot application meant to represent the backend portion for a Fantasy RPG game.
@@ -37,8 +37,8 @@ Management, via CRUD operations, for Players, Quests, Items, etc. - each having 
 
 1. Clone the Repository
 ```bash
-git clone https://github.com/Desperadko/FantasyRPGApplication.git
-cd FantasyRPGApplication
+git clone https://github.com/Desperadko/fantasy-rpg-springboot-app.git
+cd fantasy-rpg-springboot-app
 ```
 
 2. Build and Run with Docker Compose
