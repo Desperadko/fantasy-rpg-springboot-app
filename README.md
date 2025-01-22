@@ -10,7 +10,7 @@ Management, via CRUD operations, for Players, Quests, Items, etc. - each having 
 ## Prerequisites
 
 1. Docker
-- Install [Docker](https://hub.docker.com/)
+- Install [Docker](https://hub.docker.com/).
 
 2. Docker Compose
 - Comes pre-installed with Docker Dekstop on Windows/Mac.
@@ -58,7 +58,7 @@ mvn spring-boot:run
 
 ## Application usage
 
-After Docker containers have starter both the application and a MySQL server would be running on ports 8080 and 33060 respectfully.<br>
+After Docker containers have started, both the application and the MySQL server should be running on ports 8080 and 33060 respectfully.<br>
 
 For Swagger UI access use the following link: [Swagger FantasyRPGApplication](http://localhost:8080/swagger-ui/index.html#/)
 There you can freely test our prepared HTTP requests for each entity.<br><br>
