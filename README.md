@@ -58,7 +58,7 @@ mvn spring-boot:run
 
 ## Application usage
 
-After Docker containers have started, both the application and the MySQL server should be running on ports 8080 and 33060 respectfully.<br>
+After Docker containers have started, both the application and the MySQL server should be running on ports 8080 and 33060 respectively.<br>
 
 For Swagger UI access use the following link: [Swagger FantasyRPGApplication](http://localhost:8080/swagger-ui/index.html#/)
 There you can freely test our prepared HTTP requests for each entity.<br><br>
